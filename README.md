@@ -60,5 +60,6 @@ O script modifica o Registro do Windows. É altamente recomendável criar um pon
 A instalação do Windows 11 em hardware oficialmente não suportado pode levar a problemas de desempenho, falta de drivers para componentes específicos, e, mais importante, a Microsoft pode restringir atualizações de segurança futuras para sistemas não conformes.
 A verificação de POPCNT é uma barreira física. Se seu processador não a suportar, a instalação do Windows 11 24H2 e versões subsequentes irá falhar, e este script não poderá contornar essa limitação de hardware.
 Este script não se responsabiliza por quaisquer danos, perdas de dados ou instabilidades no sistema que possam ocorrer.
+
 🤝 Contribuições
 Contribuições, sugestões e relatórios de bugs são muito bem-vindos! Sinta-se à vontade para abrir uma issue ou enviar um pull request.
