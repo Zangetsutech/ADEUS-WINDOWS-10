@@ -1,5 +1,5 @@
 🚀 ADEUS WINDOWS 10!
-A ferramenta definitiva para instalar o Windows 11, mesmo que seu hardware diga 'não' ao TPM, Secure Boot ou CPU antiga!
+A ferramenta definitiva  e 100% Brasileira para instalar o Windows 11, mesmo que seu hardware diga 'não' ao TPM, Secure Boot ou CPU antiga!
 Este é um utilitário PowerShell com interface gráfica (GUI) criado para simplificar e automatizar o processo de instalação do Windows 11 em computadores que não atendem aos requisitos mínimos de hardware da Microsoft, como TPM 2.0, Secure Boot, e requisitos de RAM/CPU específicos.
 
 ✨ Recursos
