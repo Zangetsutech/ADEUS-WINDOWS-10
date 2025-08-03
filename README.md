@@ -5,7 +5,9 @@ Este é um utilitário PowerShell com interface gráfica (GUI) criado para simpl
 ✨ Recursos
 O ADEUS WINDOWS 10! é mais do que um simples bypass; ele é um conjunto completo de ferramentas para sua transição para o Windows 11:
 Bypass de Requisitos Essenciais: Aplica automaticamente as modificações necessárias no Registro do Windows para contornar as verificações de TPM 2.0, Secure Boot, RAM e CPU durante a instalação do Windows 11.
+
 Backup e Restauração Segura: Antes de qualquer alteração, o script cria um backup das chaves de registro afetadas, permitindo que você restaure as configurações originais do sistema a qualquer momento, garantindo sua tranquilidade.
+
 Opções Flexíveis de Download de ISO:
 Fido.ps1 Integrado: Inicia o popular script Fido para baixar imagens ISO oficiais do Windows diretamente dos servidores da Microsoft, permitindo escolher a versão e edição desejada.
 Media Creation Tool (MCT): Baixa e inicia a ferramenta oficial da Microsoft para criar sua própria ISO ou mídia de instalação do Windows 11.
