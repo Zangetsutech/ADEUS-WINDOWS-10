@@ -67,3 +67,5 @@ Contribuições, sugestões e relatórios de bugs são muito bem-vindos! Sinta-s
 
 Chave Pix aleatória para contribuição:
 4004b85b-0c6b-49c2-bff1-62427b4f1cf7
+
+Youtube: https://www.youtube.com/@Zangetsutech
