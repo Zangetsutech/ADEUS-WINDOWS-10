@@ -36,9 +36,9 @@ Método Recomendado: Clique com o botão direito no arquivo ADEUS WINDOWS 10!.ps
 Método Alternativo: Abra o PowerShell como Administrador.
 
 Navegue até o diretório onde o script foi salvo e execute-o. Pode ser necessário ajustar a Política de Execução para permitir scripts:
-Generated powershell
+
 Set-ExecutionPolicy Bypass -Scope Process -Force; .\ADEUS WINDOWS 10!.ps1
-Use code with caution.
+Use esse código com CUIDADO!
 
 Powershell
 Siga as Instruções na GUI:
