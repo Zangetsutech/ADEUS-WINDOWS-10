@@ -64,3 +64,6 @@ Este script não se responsabiliza por quaisquer danos, perdas de dados ou insta
 
 🤝 Contribuições
 Contribuições, sugestões e relatórios de bugs são muito bem-vindos! Sinta-se à vontade para abrir uma issue ou enviar um pull request.
+
+Chave Pix aleatória para contribuição:
+4004b85b-0c6b-49c2-bff1-62427b4f1cf7
