@@ -37,7 +37,8 @@ Método Alternativo: Abra o PowerShell como Administrador.
 
 Navegue até o diretório onde o script foi salvo e execute-o. Pode ser necessário ajustar a Política de Execução para permitir scripts:
 
-````Set-ExecutionPolicy Bypass -Scope Process -Force; .\"ADEUS WINDOWS 10!.ps1"````
+```Set-ExecutionPolicy Bypass -Scope Process -Force; .\"ADEUS WINDOWS 10!.ps1"```
+
 Use esse código com CUIDADO!
 
 Powershell
