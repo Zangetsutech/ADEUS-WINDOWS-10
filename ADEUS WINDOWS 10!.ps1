@@ -1,8 +1,8 @@
 # =================================================================================================
-# Script:         Secure-Bypass-And-Install-Win11-V8-UNRESTRICTED-FIDO-MCT.ps1 (VERSÃO COM BLOQUEIO DE CPU E DOWNLOADERS)
-# Description:    Versão final que agora bloqueia a execução se a CPU não suportar a instrução POPCNT.
-#                 ADICIONADO: Opções de download via Fido e Media Creation Tool.
-#                 CORRIGIDO: Conflito de parâmetros "RunAs" e "NoNewWindow" no acesso ao registro.
+# Script:         Secure-Bypass-And-Install-Win11-V8-UNRESTRICTED-FIDO-MCT.ps1 (VERSAO COM BLOQUEIO DE CPU E DOWNLOADERS)
+# Description:    Versao final que agora bloqueia a execucao se a CPU nao suportar a instrucao POPCNT.
+#                 ADICIONADO: Opcoes de download via Fido e Media Creation Tool.
+#                 CORRIGIDO: Conflito de parametros "RunAs" e "NoNewWindow" no acesso ao registro.
 # Disclaimer:     Use por sua conta e risco.
 # =================================================================================================
 
@@ -13,11 +13,11 @@ if (-NOT ([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdenti
     exit
 }
 
-# --- Definições da GUI (Windows Forms) ---
+# --- Definicoes da GUI (Windows Forms) ---
 Add-Type -AssemblyName System.Windows.Forms
 Add-Type -AssemblyName System.Drawing
 
-# --- Variáveis Globais e de Registro ---
+# --- Variaveis Globais e de Registro ---
 $script:isoPath = ""
 $BackupFolder = [System.IO.Path]::Combine($env:USERPROFILE, "Desktop", "Win11_Bypass_Backup")
 $script:backupFileAppCompat = ""
@@ -28,7 +28,7 @@ $script:mountedImage = $null
 $AppCompatKeyPath = "HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\AppCompatFlags"
 $MoSetupKeyPath = "HKLM\SYSTEM\Setup"
 
-# --- Criação do Formulário Principal ---
+# --- Criacao do Formulario Principal ---
 $form = New-Object System.Windows.Forms.Form
 $form.Text = "ADEUS WINDOWS 10!"
 $form.Size = New-Object System.Drawing.Size(500, 600)
@@ -41,7 +41,7 @@ $form.MinimizeBox = $false
 $step1Label = New-Object System.Windows.Forms.Label
 $step1Label.Location = New-Object System.Drawing.Point(20, 20)
 $step1Label.Size = New-Object System.Drawing.Size(460, 20)
-$step1Label.Text = "Etapa 1: Faça backup e aplique o bypass ou restaure."
+$step1Label.Text = "Etapa 1: Inicie o backup e aplique o bypass ou restaure."
 $step1Label.Font = New-Object System.Drawing.Font("Segoe UI", 10, [System.Drawing.FontStyle]::Bold)
 $form.Controls.Add($step1Label)
 
@@ -56,7 +56,7 @@ $form.Controls.Add($applyButton)
 $restoreButton = New-Object System.Windows.Forms.Button
 $restoreButton.Location = New-Object System.Drawing.Point(250, 50)
 $restoreButton.Size = New-Object System.Drawing.Size(220, 40)
-$restoreButton.Text = "Restaurar do Backup"
+$restoreButton.Text = "Restaurar"
 $restoreButton.Font = New-Object System.Drawing.Font("Segoe UI", 9, [System.Drawing.FontStyle]::Bold)
 $restoreButton.BackColor = [System.Drawing.ColorTranslator]::fromHtml("#FFCDD2")
 $restoreButton.Enabled = $false
@@ -76,7 +76,7 @@ $downloadIsoButton.Location = New-Object System.Drawing.Point(20, 140)
 $downloadIsoButton.Size = New-Object System.Drawing.Size(220, 40)
 $downloadIsoButton.Text = "Baixar ISO (via Fido)"
 $downloadIsoButton.Font = New-Object System.Drawing.Font("Segoe UI", 10)
-$downloadIsoButton.BackColor = [System.Drawing.ColorTranslator]::FromHtml("#D1C4E9") # Cor roxa clara
+$downloadIsoButton.BackColor = [System.Drawing.ColorTranslator]::FromHtml("#D1C4E9")
 $form.Controls.Add($downloadIsoButton)
 
 $mctButton = New-Object System.Windows.Forms.Button
@@ -84,7 +84,7 @@ $mctButton.Location = New-Object System.Drawing.Point(250, 140)
 $mctButton.Size = New-Object System.Drawing.Size(220, 40)
 $mctButton.Text = "Criar ISO (MCT Oficial)"
 $mctButton.Font = New-Object System.Drawing.Font("Segoe UI", 10)
-$mctButton.BackColor = [System.Drawing.ColorTranslator]::FromHtml("#B3E5FC") # Cor azul clara
+$mctButton.BackColor = [System.Drawing.ColorTranslator]::FromHtml("#B3E5FC")
 $form.Controls.Add($mctButton)
 
 
@@ -113,7 +113,7 @@ $form.Controls.Add($isoPathBox)
 $installButton = New-Object System.Windows.Forms.Button
 $installButton.Location = New-Object System.Drawing.Point(50, 320)
 $installButton.Size = New-Object System.Drawing.Size(380, 50)
-$installButton.Text = "Iniciar Instalação"
+$installButton.Text = "Iniciar"
 $installButton.Font = New-Object System.Drawing.Font("Segoe UI", 12, [System.Drawing.FontStyle]::Bold)
 $installButton.BackColor = [System.Drawing.ColorTranslator]::fromHtml("#BBDEFB")
 $installButton.Enabled = $false
@@ -124,13 +124,13 @@ $statusBox.Location = New-Object System.Drawing.Point(20, 390)
 $statusBox.Size = New-Object System.Drawing.Size(450, 160)
 $statusBox.ReadOnly = $true
 $statusBox.Font = New-Object System.Drawing.Font("Consolas", 9)
-$statusBox.Text = "Aguardando ação..."
+$statusBox.Text = "Aguardando acao..."
 $form.Controls.Add($statusBox)
 
 
-# --- Funções ---
+# --- Funcoes ---
 function Log-Status ($message, $color = "Black") {
-    if ($statusBox.Text -eq "Aguardando ação...") { $statusBox.Clear() }
+    if ($statusBox.Text -eq "Aguardando acao...") { $statusBox.Clear() }
     $statusBox.SelectionStart = $statusBox.TextLength
     $statusBox.SelectionLength = 0
     $statusBox.SelectionColor = $color
@@ -144,7 +144,7 @@ function Test-PopcntSupport {
         $hasSlat = (Get-CimInstance -ClassName Win32_Processor).SecondLevelAddressTranslationExtensions
         return $hasSlat
     } catch {
-        Log-Status "AVISO: Falha ao consultar o processador. Não foi possível verificar o suporte a POPCNT." "Orange"
+        Log-Status "AVISO: Falha ao consultar o processador. impossivel verificar o suporte ao POPCNT." "Orange"
         return $true
     }
 }
@@ -157,12 +157,12 @@ function CheckForExistingBackup {
             $script:backupFileAppCompat = $latestAppCompat.FullName
             $script:backupFileMoSetup = $latestMoSetup.FullName
             $restoreButton.Enabled = $true
-            Log-Status "Backup anterior encontrado. O botão de restauração está ativo." "Blue"
+            Log-Status "Backup anterior encontrado. O botao de restauracao esta ativo." "Blue"
         }
     }
 }
 
-# --- Lógica dos Botões ---
+# --- Logica dos Botoes ---
 $applyButton.Add_Click({
     try {
         Log-Status "Iniciando processo de backup..."; if (-NOT(Test-Path $BackupFolder)) { New-Item -Path $BackupFolder -ItemType Directory | Out-Null; Log-Status "Pasta de backup criada em: $BackupFolder" }
@@ -171,10 +171,9 @@ $applyButton.Add_Click({
         Log-Status "Exportando chave AppCompatFlags..."; Start-Process reg.exe -ArgumentList "export `"$AppCompatKeyPath`" `"$($script:backupFileAppCompat)`" /y" -Wait -NoNewWindow
         Log-Status "Exportando chave MoSetup..."; Start-Process reg.exe -ArgumentList "export `"$MoSetupKeyPath`" `"$($script:backupFileMoSetup)`" /y" -Wait -NoNewWindow
         
-        if ((Test-Path $script:backupFileAppCompat) -and (Test-Path $script:backupFileMoSetup)) { Log-Status "Backup concluído com SUCESSO!" "DarkGreen"; $restoreButton.Enabled = $true } else { Throw "A criação do arquivo de backup falhou!" }
-        Log-Status "Iniciando aplicação do bypass..."; Log-Status "Limpando marcadores de compatibilidade antigos..."
+        if ((Test-Path $script:backupFileAppCompat) -and (Test-Path $script:backupFileMoSetup)) { Log-Status "Backup concluido com SUCESSO!" "DarkGreen"; $restoreButton.Enabled = $true } else { Throw "A criacao do arquivo de backup falhou!" }
+        Log-Status "Iniciando aplicacao do bypass..."; Log-Status "Limpando marcadores de compatibilidade antigos..."
         
-        # --- CORREÇÃO: Removido -NoNewWindow quando -Verb RunAs é usado ---
         Start-Process reg.exe -ArgumentList 'delete "HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\AppCompatFlags\CompatMarkers" /f' -Verb RunAs -Wait
         Start-Process reg.exe -ArgumentList 'delete "HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\AppCompatFlags\Shared" /f' -Verb RunAs -Wait
         Start-Process reg.exe -ArgumentList 'delete "HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\AppCompatFlags\TargetVersionUpgradeExperienceIndicators" /f' -Verb RunAs -Wait
@@ -183,21 +182,20 @@ $applyButton.Add_Click({
         Log-Status "Configurando bypass de TPM/CPU (MoSetup)..."
         Start-Process reg.exe -ArgumentList 'add "HKLM\SYSTEM\Setup\MoSetup" /f /v AllowUpgradesWithUnsupportedTPMOrCPU /t REG_DWORD /d 1' -Verb RunAs -Wait
         Log-Status "Bypass abrangente aplicado com SUCESSO!" "Green"
-    } catch { Log-Status "ERRO CRÍTICO: $($_.Exception.Message)" "Red" }
+    } catch { Log-Status "ERRO CRITICO: $($_.Exception.Message)" "Red" }
 })
 
 $restoreButton.Add_Click({
     if ((-not(Test-Path $script:backupFileAppCompat)) -or (-not(Test-Path $script:backupFileMoSetup))) {
-        Log-Status "ERRO: Arquivos de backup não encontrados ou não definidos." "Red"; return
+        Log-Status "ERRO: Arquivos de backup nao encontrados ou nao definidos." "Red"; return
     }
     try {
-        Log-Status "Iniciando restauração a partir do backup..." "Blue"
+        Log-Status "Iniciando restauracao a partir do backup..." "Blue"
         
-        # --- CORREÇÃO: Removido -NoNewWindow quando -Verb RunAs é usado ---
         Start-Process reg.exe -ArgumentList "import `"$($script:backupFileAppCompat)`"" -Verb RunAs -Wait
         Start-Process reg.exe -ArgumentList "import `"$($script:backupFileMoSetup)`"" -Verb RunAs -Wait
         
-        Log-Status "Restauração do registro concluída com SUCESSO." "Blue"
+        Log-Status "Restauracao do registro concluida com SUCESSO." "Blue"
         $restoreButton.Enabled = $false
     } catch { Log-Status "ERRO ao restaurar do backup: $($_.Exception.Message)" "Red" }
 })
@@ -207,35 +205,35 @@ $downloadIsoButton.Add_Click({
     $fidoPath = [System.IO.Path]::Combine($env:USERPROFILE, "Desktop", "Fido.ps1")
 
     try {
-        Log-Status "Baixando o script Fido.ps1 para a sua Área de Trabalho..." "Blue"
+        Log-Status "Baixando o script Fido.ps1 para a sua Area de Trabalho..." "Blue"
         Invoke-WebRequest -Uri $fidoUrl -OutFile $fidoPath
-        Log-Status "Download do Fido.ps1 concluído com SUCESSO!" "DarkGreen"
+        Log-Status "Download do Fido.ps1 concluido com SUCESSO!" "DarkGreen"
         
         Log-Status "Iniciando o script Fido.ps1..." "Blue"
         Start-Process powershell.exe -ArgumentList "-NoProfile -ExecutionPolicy Bypass -File `"$fidoPath`""
-        Log-Status "Fido foi iniciado em uma nova janela. Siga as instruções lá." "Blue"
+        Log-Status "Fido foi iniciado em uma nova janela. Siga as instrucoes la." "Blue"
 
     } catch {
-        Log-Status "ERRO CRÍTICO ao baixar o Fido.ps1: $($_.Exception.Message)" "Red"
-        [System.Windows.Forms.MessageBox]::Show("Não foi possível baixar o Fido.ps1. Verifique sua conexão com a internet ou o link.", "Erro de Download", "OK", "Error") | Out-Null
+        Log-Status "ERRO CRITICO ao baixar o Fido.ps1: $($_.Exception.Message)" "Red"
+        [System.Windows.Forms.MessageBox]::Show("Nao foi possivel baixar o Fido.ps1. Verifique sua conexao com a internet ou o link.", "Erro de Download", "OK", "Error") | Out-Null
     }
 })
 
 $mctButton.Add_Click({
     $mctUrl = "https://go.microsoft.com/fwlink/?linkid=2156295"
-    $mctPath = [System.IO.Path]::Combine($env:USERPROFILE, "Desktop", "MediaCreationTool_Win11_24H2.exe")
+    $mctPath = [System.IO.Path]::Combine($env:USERPROFILE, "Desktop", "MediaCreationTool.exe")
 
     try {
-        Log-Status "Baixando Media Creation Tool 24H2 para sua Área de Trabalho..." "Blue"
+        Log-Status "Baixando Media Creation Tool para sua Área de Trabalho..." "Blue"
         Invoke-WebRequest -Uri $mctUrl -OutFile $mctPath
-        Log-Status "Download do Media Creation Tool concluído com SUCESSO!" "DarkGreen"
+        Log-Status "Download do Media Creation Tool concluido com SUCESSO!" "DarkGreen"
         
         $mctArgs = "/Eula Accept /Action CreateMedia /MediaLangCode pt-BR /MediaArch x64 /MediaEdition Professional"
         Start-Process -FilePath $mctPath -ArgumentList $mctArgs
         
     } catch {
-        Log-Status "ERRO CRÍTICO ao baixar ou executar o Media Creation Tool: $($_.Exception.Message)" "Red"
-        [System.Windows.Forms.MessageBox]::Show("Não foi possível baixar ou iniciar a ferramenta. Verifique sua conexão com a internet ou permissões.", "Erro de Automação", "OK", "Error") | Out-Null
+        Log-Status "ERRO CRITICO ao baixar ou executar o Media Creation Tool: $($_.Exception.Message)" "Red"
+        [System.Windows.Forms.MessageBox]::Show("Nao foi possivel baixar ou iniciar a ferramenta. Verifique sua conexao com a internet ou permissoes.", "Erro de Automacao", "OK", "Error") | Out-Null
     }
 })
 
@@ -251,24 +249,24 @@ $selectIsoButton.Add_Click({
 })
 
 $installButton.Add_Click({
-    Log-Status "Iniciando processo de instalação... Certifique-se de que o bypass foi aplicado." "Blue"
+    Log-Status "Iniciando processo de instalacao... Certifique-se de que o bypass foi aplicado." "Blue"
     try {
         Log-Status "Tentando montar o ISO em: $($script:isoPath)"
         $script:mountedImage = Mount-DiskImage -ImagePath $script:isoPath -PassThru -ErrorAction Stop
         if (-not $script:mountedImage) { Throw "Mount-DiskImage falhou em retornar um objeto." }
         $volume = $script:mountedImage | Get-Volume
-        if (-not $volume) { Throw "Não foi possível obter informações de volume." }
+        if (-not $volume) { Throw "Nao foi possivel obter informacoes de volume." }
         $driveLetter = $volume.DriveLetter
-        if (-not $driveLetter) { Throw "A letra da unidade não foi encontrada." }
+        if (-not $driveLetter) { Throw "A letra da unidade nao foi encontrada." }
         Log-Status "ISO montado com SUCESSO na unidade $($driveLetter):" "Green"
         
         $setupPath = Join-Path -Path "$($driveLetter):" -ChildPath "setup.exe"
-        if (-not(Test-Path $setupPath)) { Throw "'setup.exe' não foi encontrado na raiz do ISO montado." }
+        if (-not(Test-Path $setupPath)) { Throw "'setup.exe' nao foi encontrado na raiz do ISO montado." }
         Log-Status "Iniciando o instalador do Windows 11..."
         Start-Process -FilePath $setupPath
         Log-Status "O instalador foi iniciado. Esta janela pode ser fechada."
     } catch {
-        Log-Status "ERRO DURANTE A MONTAGEM OU INSTALAÇÃO: $($_.Exception.Message)" "Red"
+        Log-Status "ERRO DURANTE A MONTAGEM OU INSTALACAO: $($_.Exception.Message)" "Red"
         if ($script:mountedImage) {
             Log-Status "Tentando desmontar a imagem ISO..."
             Dismount-DiskImage -ImagePath $script:isoPath -ErrorAction SilentlyContinue
@@ -277,12 +275,13 @@ $installButton.Add_Click({
     }
 })
 
-# --- Inicialização e Limpeza ---
-Log-Status "Verificando requisitos de CPU (instrução POPCNT)..."
+# --- Inicializacao e Limpeza ---
+Log-Status "Verificando requisitos de CPU (POPCNT)..."
 if (-not (Test-PopcntSupport)) {
-    $errorMessage = "FALHA CRÍTICA: Seu processador não possui a instrução POPCNT (ou SSE4.2), um requisito OBRIGATÓRIO para o Windows 11 24H2. A instalação não será possível com esta CPU. As funções de bypass e instalação foram desativadas."
+    # TEXTO CORRIGIDO SEM ACENTOS PARA EVITAR ERROS DE CODIFICACAO
+    $errorMessage = "FALHA CRITICA: Seu processador nao possui a instrucao POPCNT (ou SSE4.2), um requisito OBRIGATORIO para o Windows 11 24H2. A instalacao nao sera possivel com esta CPU. As funcoes de bypass e instalacao foram desativadas."
     Log-Status $errorMessage "Red"
-    [System.Windows.Forms.MessageBox]::Show($errorMessage, "Requisito de CPU Não Atendido", [System.Windows.Forms.MessageBoxButtons]::OK, [System.Windows.Forms.MessageBoxIcon]::Stop) | Out-Null
+    [System.Windows.Forms.MessageBox]::Show($errorMessage, "Requisito de CPU Nao Atendido", [System.Windows.Forms.MessageBoxButtons]::OK, [System.Windows.Forms.MessageBoxIcon]::Stop) | Out-Null
     
     $applyButton.Enabled = $false
     $applyButton.BackColor = [System.Drawing.Color]::Gray
@@ -294,14 +293,14 @@ if (-not (Test-PopcntSupport)) {
     $selectIsoButton.BackColor = [System.Drawing.Color]::LightGray
     $installButton.Enabled = $false
     $installButton.BackColor = [System.Drawing.Color]::Gray
-} else {
-    Log-Status "SUCESSO: Seu processador SUPORTA a instrução POPCNT." "DarkGreen"
+} else { # <<< ===== CORRECAO CRITICA APLICADA AQUI: O "}" FOI ADICIONADO ANTES DO "ELSE"
+    Log-Status "SUCESSO: Seu processador SUPORTA o POPCNT." "DarkGreen"
 }
 Log-Status "------------------------------------------------------------" "Black"
 
 CheckForExistingBackup
 
-# Evento de Fechamento do Formulário para Limpeza
+# Evento de Fechamento do Formulario para Limpeza
 $form.Add_FormClosing({
     try {
         if ($script:mountedImage) {
@@ -313,5 +312,5 @@ $form.Add_FormClosing({
     }
 })
 
-# Exibir o formulário
+# Exibir o formulario
 [void]$form.ShowDialog()
