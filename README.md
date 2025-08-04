@@ -47,7 +47,7 @@ Powershell
 Siga as Instruções na GUI:
 Etapa 1: Backup e Bypass:
 Clique em "Aplicar Bypass e Fazer Backup" para que o script prepare seu sistema para a instalação do Windows 11, criando também um backup de suas configurações de registro.
-O botão "Restaurar do Backup" ficará ativo se um backup anterior for detectado, permitindo reverter as alterações.
+O botão "Restaurar" ficará ativo se um backup anterior for detectado, permitindo reverter as alterações.
 
 Etapa 1.5 (Opcional): Obtenha sua ISO do Windows:
 Use "Baixar ISO (via Fido)" para acessar diversas versões do Windows 11 diretamente dos servidores da Microsoft.
