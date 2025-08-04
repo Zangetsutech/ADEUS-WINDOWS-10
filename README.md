@@ -33,6 +33,7 @@ Baixe o Script: Faça o download do arquivo ADEUS WINDOWS 10!.ps1 para o seu com
 
 Execute como Administrador:
 Método Recomendado: Clique com o botão direito no arquivo ADEUS WINDOWS 10!.ps1 e selecione "Executar com PowerShell". O script solicitará automaticamente as permissões de administrador.
+
 Método alternativo: copiar o camnho do arquivo ps1, depois Abra o CMD com Privilégios de administrador, e cole o comando substituindo o pelo cmaninho do arquivo entre aspas
 
 ```powershell.exe -ExecutionPolicy Bypass -File "caminho do arquivo.ps1"```
