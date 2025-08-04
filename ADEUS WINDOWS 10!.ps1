@@ -1,6 +1,6 @@
 # =================================================================================================
-# Script:         Secure-Bypass-And-Install-Win11-V8-UNRESTRICTED-FIDO-MCT.ps1 (VERSAO COM BLOQUEIO DE CPU E DOWNLOADERS)
-# Description:    Versao final que agora bloqueia a execucao se a CPU nao suportar a instrucao POPCNT.
+# Script:         Secure-Bypass-And-Install-Win11-V9-UNRESTRICTED-FIDO-MCT-POPCNT-FIX.ps1
+# Description:    Versao com verificacao de POPCNT corrigida usando Coreinfo.
 #                 ADICIONADO: Opcoes de download via Fido e Media Creation Tool.
 #                 CORRIGIDO: Conflito de parametros "RunAs" e "NoNewWindow" no acesso ao registro.
 # Disclaimer:     Use por sua conta e risco.
@@ -139,15 +139,47 @@ function Log-Status ($message, $color = "Black") {
     $statusBox.Refresh()
 }
 
+# ================================================================
+# FUNCAO DE VERIFICACAO DE POPCNT CORRIGIDA
+# ================================================================
 function Test-PopcntSupport {
+    # Caminho para a ferramenta Coreinfo na pasta temporaria do usuario
+    $coreinfoPath = Join-Path $env:TEMP "coreinfo.exe"
+    # URL oficial de download do Coreinfo da Microsoft
+    $coreinfoUrl = "https://live.sysinternals.com/coreinfo.exe"
+
     try {
-        $hasSlat = (Get-CimInstance -ClassName Win32_Processor).SecondLevelAddressTranslationExtensions
-        return $hasSlat
+        # 1. Baixar o Coreinfo se ele ainda nao existir localmente
+        if (-not (Test-Path $coreinfoPath)) {
+            Log-Status "Baixando Coreinfo da Microsoft para verificar a CPU..." "Blue"
+            # O -UseBasicParsing e mais compativel com versoes antigas do PowerShell
+            Invoke-WebRequest -Uri $coreinfoUrl -OutFile $coreinfoPath -UseBasicParsing
+        }
+
+        # 2. Executar o Coreinfo e capturar a saida de texto
+        Log-Status "Analisando o suporte a instrucao POPCNT..."
+        # O argumento "-accepteula" e crucial para evitar que o script pare aguardando a aceitacao da licenca
+        $cpuInfo = & $coreinfoPath -accepteula
+        
+        # 3. Procurar pela linha do POPCNT e verificar se ela contem o asterisco (*) que indica suporte
+        $popcntSupportLine = $cpuInfo | Where-Object { $_ -match "^\s*POPCNT\s" }
+        
+        if ($popcntSupportLine -and $popcntSupportLine -match '\*') {
+            # O asterisco foi encontrado, a CPU suporta a instrucao.
+            return $true
+        } else {
+            # A linha nao foi encontrada ou nao tem o asterisco, nao ha suporte.
+            return $false
+        }
+
     } catch {
-        Log-Status "AVISO: Falha ao consultar o processador. impossivel verificar o suporte ao POPCNT." "Orange"
-        return $true
+        # 4. Tratar qualquer erro que possa ocorrer (falha no download, execucao bloqueada, etc.)
+        Log-Status "ERRO: Falha ao executar a verificacao de CPU com Coreinfo. $($_.Exception.Message)" "Red"
+        # Em caso de falha, e mais seguro assumir que nao ha suporte para proteger o usuario.
+        return $false
     }
 }
+# ================================================================
 
 function CheckForExistingBackup {
     if (Test-Path $BackupFolder) {
@@ -278,8 +310,7 @@ $installButton.Add_Click({
 # --- Inicializacao e Limpeza ---
 Log-Status "Verificando requisitos de CPU (POPCNT)..."
 if (-not (Test-PopcntSupport)) {
-    # TEXTO CORRIGIDO SEM ACENTOS PARA EVITAR ERROS DE CODIFICACAO
-    $errorMessage = "FALHA CRITICA: Seu processador nao possui a instrucao POPCNT (ou SSE4.2), um requisito OBRIGATORIO para o Windows 11 24H2. A instalacao nao sera possivel com esta CPU. As funcoes de bypass e instalacao foram desativadas."
+    $errorMessage = "FALHA CRITICA: Seu processador nao possui a instrucao POPCNT, um requisito OBRIGATORIO para o Windows 11 24H2 ou superior. A instalacao nao sera possivel com esta CPU. As funcoes de bypass e instalacao foram desativadas."
     Log-Status $errorMessage "Red"
     [System.Windows.Forms.MessageBox]::Show($errorMessage, "Requisito de CPU Nao Atendido", [System.Windows.Forms.MessageBoxButtons]::OK, [System.Windows.Forms.MessageBoxIcon]::Stop) | Out-Null
     
@@ -293,8 +324,8 @@ if (-not (Test-PopcntSupport)) {
     $selectIsoButton.BackColor = [System.Drawing.Color]::LightGray
     $installButton.Enabled = $false
     $installButton.BackColor = [System.Drawing.Color]::Gray
-} else { # <<< ===== CORRECAO CRITICA APLICADA AQUI: O "}" FOI ADICIONADO ANTES DO "ELSE"
-    Log-Status "SUCESSO: Seu processador SUPORTA o POPCNT." "DarkGreen"
+} else {
+    Log-Status "SUCESSO: Seu processador SUPORTA a instrucao POPCNT." "DarkGreen"
 }
 Log-Status "------------------------------------------------------------" "Black"
 
